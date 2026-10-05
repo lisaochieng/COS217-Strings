@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------*/
 /* replace.c                                                          */
-/* Author: ???                                                        */
+/* Author: Lisa Ochieng                                               */
 /*--------------------------------------------------------------------*/
 
 #include "str.h"
@@ -20,7 +20,49 @@
 static size_t replaceAndWrite(const char *pcLine,
                               const char *pcFrom, const char *pcTo)
 {
-   /* Insert your code here. */
+   size_t uReplacements = 0;
+   size_t uFromLength;
+   const char *pcCurrent;
+   const char *pcMatch;
+
+   assert(pcLine != NULL);
+   assert(pcFrom != NULL);
+   assert(pcTo != NULL);
+
+   /* if the target string is empty, print pcline and return 0*/
+   if (*pcFrom == '\0'){
+      printf("%s", pcLine);
+      return 0;
+   }
+
+   uFromLength = Str_getLength(pcFrom);
+   pcCurrent = pcLine;
+
+   while(1){
+      /* find next occurrence of pcFrom */
+      pcMatch = Str_search(pcCurrent, pcFrom);
+
+      /* if no more matches print rest of the text */
+      if (pcMatch == NULL){
+         printf("%s", pcCurrent);
+         break;
+      }
+
+      /* print all chars leading up to the match */
+      while (pcCurrent < pcMatch){
+         putchar(*pcCurrent);
+         pcCurrent++;
+      }
+
+      /* print replacement str*/
+      printf("%s", pcTo);
+
+      /* jump over the original word*/
+      pcCurrent += uFromLength;
+      uReplacements++;
+   }
+
+   return uReplacements;
 }
 
 /*--------------------------------------------------------------------*/
@@ -56,7 +98,10 @@ int main(int argc, char *argv[])
    pcTo = argv[2];
 
    while (fgets(acLine, MAX_LINE_SIZE, stdin) != NULL)
-      /* Insert your code here. */
+   {
+      /* accumulate the replacements made on each line*/
+      uReplaceCount += replaceAndWrite(acLine, pcFrom, pcTo);
+   }
 
    fprintf(stderr, "%lu replacements\n", (unsigned long)uReplaceCount);
    return 0;
